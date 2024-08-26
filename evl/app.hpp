@@ -10,10 +10,12 @@ public:
 
     static void event(AbstractEventUp event) noexcept;
 
-    static void quit();
+    static void quit() noexcept;
+
+    static EventLoopWp eventLoop() noexcept;
 
 private:
-    static EventLoop appLoop;
+    static EventLoopSp appLoop;
 };
 
 } // namespace evl

@@ -2,21 +2,26 @@
 
 namespace evl {
 
-EventLoop App::appLoop;
+EventLoopSp App::appLoop = std::make_shared<EventLoop>();
 
 int App::exec()
 {
-    return appLoop.exec();
+    return appLoop->exec();
 }
 
 void App::event(AbstractEventUp event) noexcept
 {
-    appLoop.event(std::move(event));
+    appLoop->event(std::move(event));
 }
 
-void App::quit()
+void App::quit() noexcept
 {
-    appLoop.quit();
+    appLoop->quit();
+}
+
+EventLoopWp App::eventLoop() noexcept
+{
+    return appLoop;
 }
 
 } // namespace evl
