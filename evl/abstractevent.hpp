@@ -13,6 +13,6 @@ protected:
     AbstractEvent() noexcept = default;
 };
 
-using EventUp = std::unique_ptr<AbstractEvent>;
+using AbstractEventUp = std::unique_ptr<AbstractEvent>;
 
 } // namespace evl

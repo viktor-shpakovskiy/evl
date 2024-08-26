@@ -41,8 +41,8 @@ private:
     mutable bool enabled;
     SignalHandlerSp handler;
 
-    EventUp makeEvent(Args... args) const noexcept {
-        return EventUp(new SignalHandlerEvent<Args...>(handler, std::move(args)...));
+    AbstractEventUp makeEvent(Args... args) const noexcept {
+        return AbstractEventUp(new SignalHandlerEvent<Args...>(handler, std::move(args)...));
     }
 };
 

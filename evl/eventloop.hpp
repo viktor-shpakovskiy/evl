@@ -15,7 +15,7 @@ public:
 
     int exec() const;
 
-    void event(EventUp event) const noexcept;
+    void event(AbstractEventUp event) const noexcept;
 
     void quit() const;
 

@@ -9,7 +9,7 @@ int App::exec()
     return appLoop.exec();
 }
 
-void App::event(EventUp event) noexcept
+void App::event(AbstractEventUp event) noexcept
 {
     appLoop.event(std::move(event));
 }

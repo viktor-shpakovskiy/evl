@@ -7,7 +7,7 @@ class EventLoopImpl {
     friend class EventLoop;
     friend class QuitEvent;
 
-    TSQueue<EventUp> events;
+    TSQueue<AbstractEventUp> events;
 
     mutable  bool run = true;
 
@@ -43,14 +43,14 @@ int EventLoop::exec() const
     return m_impl->loop();
 }
 
-void EventLoop::event(EventUp event) const noexcept
+void EventLoop::event(AbstractEventUp event) const noexcept
 {
     m_impl->events.push(std::move(event));
 }
 
 void EventLoop::quit() const
 {
-    event(EventUp(new QuitEvent(m_impl.get())));
+    event(AbstractEventUp(new QuitEvent(m_impl.get())));
 }
 
 void EventLoopImplDeleter::operator()(EventLoopImpl *p) const noexcept {

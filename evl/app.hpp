@@ -8,7 +8,7 @@ class App {
 public:
     static int exec();
 
-    static void event(EventUp event) noexcept;
+    static void event(AbstractEventUp event) noexcept;
 
     static void quit();
 
