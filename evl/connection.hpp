@@ -35,22 +35,34 @@ private:
     using SignalHandler = AbstractSignalHandler<Args...>;
     using SignalHandlerSp = AbstractSignalHandlerSp<Args...>;
 
-    Connection(SignalHandler *handler, ConnectionType type) noexcept
-        : type(type), enabled(true), handler(handler) {}
+    Connection(EventLoopWp evl,
+               SignalHandler *handler,
+               ConnectionType type) noexcept
+        : wevl(evl)
+        , type(type)
+        , enabled(true)
+        , handler(handler)
+    {
+    }
 
     void handle(Args... args) const {
         if (enabled) {
             if (type == DirectConnection)
                 handler->call(std::move(args)...);
-            else
-                App::event(AbstractEventUp(new SignalHandlerEvent<Args...>(
-                    handler, std::move(args)...)));
+            else {
+                auto evl = wevl.lock();
+                if (evl)
+                    evl->event(std::move(AbstractEventUp(
+                        new SignalHandlerEvent<Args...>(handler,
+                                                        std::move(args)...))));
+            }
         }
     }
 
+    EventLoopWp wevl;
+    SignalHandlerSp handler;
     const ConnectionType type;
     mutable bool enabled;
-    SignalHandlerSp handler;
 };
 
 template <class... Args>

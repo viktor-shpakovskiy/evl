@@ -17,16 +17,44 @@ public:
 
     template <class Functor>
     ConnectionSp<Args...>
-    connect(Functor &&functor, ConnectionType type = DirectConnection) const noexcept {
+    connect(Functor &&functor,
+            ConnectionType type = DirectConnection,
+            EventLoopWp evl = App::eventLoop()) const noexcept
+    {
         auto handler = new FunctorSignalHanlder<Functor, Args...>(functor);
-        return connectHandler(handler, type);
+        return connectHandler(evl, handler, type);
+    }
+
+    template <class Functor>
+    ConnectionSp<Args...>
+    connect(Functor &&functor,
+            EventLoopWp evl = App::eventLoop(),
+            ConnectionType type = DirectConnection) const noexcept
+    {
+        auto handler = new FunctorSignalHanlder<Functor, Args...>(functor);
+        return connectHandler(evl, handler, type);
     }
 
     template <class Object, class Method>
     ConnectionSp<Args...>
-    connect(Object *object, Method method, ConnectionType type = DirectConnection) const noexcept {
+    connect(Object *object,
+            Method method,
+            ConnectionType type = DirectConnection,
+            EventLoopWp evl = App::eventLoop()) const noexcept
+    {
         auto handler = new MethodSignalHandler<Object, Method, Args...> (object, method);
-        return connectHandler(handler, type);
+        return connectHandler(evl, handler, type);
+    }
+
+    template <class Object, class Method>
+    ConnectionSp<Args...>
+    connect(Object *object,
+            Method method,
+            EventLoopWp evl = App::eventLoop(),
+            ConnectionType type = DirectConnection) const noexcept
+    {
+        auto handler = new MethodSignalHandler<Object, Method, Args...> (object, method);
+        return connectHandler(evl, handler, type);
     }
 
     void emit(Args... args) const {
@@ -53,8 +81,12 @@ private:
     mutable std::list<ConnectionWp<Args...>> w_connections;
 
     inline ConnectionSp<Args...>
-    connectHandler(SignalHandler *handler, ConnectionType type) const noexcept {
-        auto connection = ConnectionSp<Args...>(new Connection<Args...>(handler, type));
+    connectHandler(EventLoopWp evl,
+                   SignalHandler *handler,
+                   ConnectionType type) const noexcept
+    {
+        auto connection = ConnectionSp<Args...>(new Connection<Args...>(
+            evl, handler, type));
         w_connections.emplace_back(std::move(connection));
         return connection;
     }
