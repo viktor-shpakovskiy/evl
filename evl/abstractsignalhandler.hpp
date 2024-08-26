@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace evl {
 
 template <class... Args>

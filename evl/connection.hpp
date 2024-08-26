@@ -1,5 +1,6 @@
 #pragma once
 
+#include "app.hpp"
 #include "abstractsignalhandler.hpp"
 #include "signalhandlerevent.hpp"
 
@@ -37,13 +38,19 @@ private:
     Connection(SignalHandler *handler, ConnectionType type) noexcept
         : type(type), enabled(true), handler(handler) {}
 
+    void handle(Args... args) const {
+        if (enabled) {
+            if (type == DirectConnection)
+                handler->call(std::move(args)...);
+            else
+                App::event(AbstractEventUp(new SignalHandlerEvent<Args...>(
+                    handler, std::move(args)...)));
+        }
+    }
+
     const ConnectionType type;
     mutable bool enabled;
     SignalHandlerSp handler;
-
-    AbstractEventUp makeEvent(Args... args) const noexcept {
-        return AbstractEventUp(new SignalHandlerEvent<Args...>(handler, std::move(args)...));
-    }
 };
 
 template <class... Args>

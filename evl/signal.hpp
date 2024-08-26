@@ -1,6 +1,5 @@
 #pragma once
 
-#include "app.hpp"
 #include "abstractsignalhandler.hpp"
 #include "functorsignalhandler.hpp"
 #include "methodsignalhandler.hpp"
@@ -36,12 +35,7 @@ public:
         {
             auto connection = ci->lock();
             if (connection) {
-                if (connection->enabled) {
-                    if (connection->type == DirectConnection)
-                        connection->handler->call(std::move(args)...);
-                    else
-                        App::event(std::move(connection->makeEvent(std::move(args)...)));
-                }
+                connection->handle();
                 ++ci;
             }
             else
